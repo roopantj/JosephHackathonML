@@ -1,3 +1,4 @@
+import string
 from fastapi import FastAPI, UploadFile
 from pdf2image import convert_from_path
 import cv2
@@ -50,17 +51,19 @@ async def create_file(file: UploadFile):
             cv2.imwrite("D:\Joseph Hackathom\ML Model\\phone.jpeg",crop_phone)
             cv2.imwrite("D:\Joseph Hackathom\ML Model\\email.jpeg",crop_email)
         getFields(img)   
-        url=["D:\Joseph Hackathom\ML Model\\name.jpeg","D:\Joseph Hackathom\ML Model\\age.jpeg"]
+        url=["D:\Joseph Hackathom\ML Model\\name.jpeg","D:\Joseph Hackathom\ML Model\\age.jpeg","D:\Joseph Hackathom\ML Model\\gender.jpeg","D:\Joseph Hackathom\ML Model\\city.jpeg","D:\Joseph Hackathom\ML Model\\state.jpeg","D:\Joseph Hackathom\ML Model\\city.jpeg","D:\Joseph Hackathom\ML Model\\phone.jpeg","D:\Joseph Hackathom\ML Model\\email.jpeg"]
         images = [keras_ocr.tools.read(i) for i in url]
         preds=[]
         for i in images:
             preds.append(pytesseract.image_to_string(i))
     except Exception as e:
-        print(str(e))   
+        print(str(e))
+    ans=[]
+    for i in preds:
+        ans.append(''.join(e for e in str(i) if e.isalnum()))
     cv2.waitKey(0) 
     cv2.destroyAllWindows()
-    
-    return {"name": preds[0],"age":preds[1]}  
+    return {"name": ans[0],"age":ans[1],"gender": "Male" if len(ans[2])==4 else "Female","city":ans[3],"state":ans[4],"phone":ans[5],"email":ans[6]}  
 
 @app.get("/")
 def welcome():
